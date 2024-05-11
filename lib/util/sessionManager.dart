@@ -8,8 +8,15 @@ class SessionManager {
   String? email;
   String? phone;
 
+  late SharedPreferences _prefs;
+
+  Future<void> _initPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
   Future<void> saveSession(int val, String id, String username, String name, String email, String phone) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
+    await _initPrefs();
     await pref.setInt("value", val);
     await pref.setString("id", id);
     await pref.setString("username", username);
@@ -21,6 +28,7 @@ class SessionManager {
 
   Future<bool> getSession() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
+    await _initPrefs();
     value = pref.getInt("value");
     id = pref.getString("id");
     username = pref.getString("username");
@@ -34,6 +42,9 @@ class SessionManager {
   Future<void> clearSession() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.clear();
+    await _initPrefs();
+    await _prefs.clear();
+
   }
 }
 

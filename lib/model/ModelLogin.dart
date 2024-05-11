@@ -5,36 +5,29 @@ ModelLogin modelLoginFromJson(String str) => ModelLogin.fromJson(json.decode(str
 String modelLoginToJson(ModelLogin data) => json.encode(data.toJson());
 
 class ModelLogin {
-  bool sukses;
+  bool success;
   int status;
-  String pesan;
+  String message;
   Data data;
 
   ModelLogin({
-    required this.sukses,
+    required this.success,
     required this.status,
-    required this.pesan,
+    required this.message,
     required this.data,
   });
 
- factory ModelLogin.fromJson(Map<String, dynamic> json) => ModelLogin(
-  sukses: json["sukses"] ?? false,
-  status: json["status"] ?? 0,
-  pesan: json["pesan"] ?? "",
-  data: json["data"] != null ? Data.fromJson(json["data"]) : Data(
-    id: "",
-    username: "",
-    email: "",
-    password: "",
-    name: "",
-    phone: "",
-  ),
-);
+  factory ModelLogin.fromJson(Map<String, dynamic> json) => ModelLogin(
+    success: json["success"] ?? false,
+    status: json["status"] ?? 0,
+    message: json["message"] ?? "",
+    data: json["data"] != null ? Data.fromJson(json["data"]) : Data(),
+  );
 
   Map<String, dynamic> toJson() => {
-    "sukses": sukses,
+    "success": success,
     "status": status,
-    "pesan": pesan,
+    "message": message,
     "data": data.toJson(),
   };
 }
@@ -43,33 +36,29 @@ class Data {
   String id;
   String username;
   String email;
-  String password;
   String name;
   String phone;
 
   Data({
-    required this.id,
-    required this.username,
-    required this.email,
-    required this.password,
-    required this.name,
-    required this.phone, 
+    this.id = "",
+    this.username = "",
+    this.email = "",
+    this.name = "",
+    this.phone = "",
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     id: json["id"] ?? "",
     username: json["username"] ?? "",
     email: json["email"] ?? "",
-    password: json["password"] ?? "",
-    name: json["name"] ?? "", 
-    phone: json["phone"] ?? "", 
+    name: json["name"] ?? "",
+    phone: json["phone"] ?? "",
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "username": username,
     "email": email,
-    "password": password,
     "name": name,
     "phone": phone,
   };

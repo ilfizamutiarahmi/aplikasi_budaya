@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:aplikasi_budaya/model/ModelBudaya.dart';
+import 'package:aplikasi_budaya/model/ModelUser.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi_budaya/view/login.dart';
-import 'package:aplikasi_budaya/model/sessionManager.dart';
+import 'package:aplikasi_budaya/util/sessionManager.dart';
 import 'package:aplikasi_budaya/view/detail_budaya.dart';
 import 'package:aplikasi_budaya/view/galery.dart';
 import 'package:aplikasi_budaya/view/list_sejarawan.dart';
+import 'package:aplikasi_budaya/view/profile.dart';
 
 import 'register.dart';
 
@@ -18,39 +20,19 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   int _currentIndex = 0;
-
+  late ModelUsers currentUser = ModelUsers(
+    id: 0, // Atau nilai yang sesuai
+    username: '',
+    email: '',
+    name: '',
+    phone: '',
+  );
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
 
-    if (index == 1) {
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => PageGallery()),
-      // );
-    } else if (index == 2) {
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => PegawaiListScreen()),
-      // );
-    } else if (index == 3) {
-      // Ambil data pengguna yang sedang login dari SessionManager
-      // ModelUsers currentUser = ModelUsers(
-      //   id: int.parse(sessionManager.id!),
-      //   username: sessionManager.username!,
-      //   email: sessionManager.email!,
-      //   name: sessionManager.name!, 
-      //   phone: '',
-      // );
-
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //       builder: (context) => PageListUser(currentUser: currentUser)),
-      // );
-    }
   }
 
   String? username;
@@ -67,7 +49,8 @@ class _HomeState extends State<Home> {
     }
   }
 
-  late List<Datum> _budayaList;
+// Inisialisasi awal _budayaList
+  late List<Datum> _budayaList = [];
   late List<Datum> _filteredBudayaList;
   late bool _isLoading;
   TextEditingController _searchController = TextEditingController();
@@ -80,7 +63,6 @@ class _HomeState extends State<Home> {
     _fetchBudaya();
     _filteredBudayaList = [];
   }
-
   Future<void> _fetchBudaya() async {
     final response =
         await http.get(Uri.parse('http://192.168.1.9/budaya_server/list_budaya.php'));
@@ -112,7 +94,7 @@ class _HomeState extends State<Home> {
       backgroundColor: const Color(0xFFFAD7C8),
       appBar: AppBar(
         title: Text(
-          'Hi, ${username ?? ''}', 
+          'Hallo', 
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -225,7 +207,17 @@ class _HomeState extends State<Home> {
           Navigator.push(context, MaterialPageRoute(builder: (context)=>GaleriPage()));
         }
         else if(_currentIndex == 3){
-          // _goToUserProfile(); // Handler untuk indeks 2 (Profile)
+          if (currentUser != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfilePage(currentUser: currentUser),
+              ),
+            );
+          } else {
+            // Tangani skenario ketika currentUser tidak valid
+            print('Log Data pengguna tidak tersedia!');
+          }
         }
       });
     },
@@ -250,9 +242,6 @@ class _HomeState extends State<Home> {
     ],
   ),
 ),
-
-
     );
   }
 }
-

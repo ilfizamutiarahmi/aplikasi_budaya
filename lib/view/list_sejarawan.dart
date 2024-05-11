@@ -1,15 +1,18 @@
 import 'dart:convert';
+import 'package:aplikasi_budaya/model/ModelLogin.dart';
 import 'package:http/http.dart' as http;
 import 'package:aplikasi_budaya/model/ModelSejarawan.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi_budaya/view/login.dart';
-import 'package:aplikasi_budaya/model/sessionManager.dart';
+import 'package:aplikasi_budaya/util/sessionManager.dart';
 import 'package:aplikasi_budaya/view/detail_budaya.dart';
 import 'package:aplikasi_budaya/view/galery.dart';
 import 'package:aplikasi_budaya/view/home.dart';
 import 'package:aplikasi_budaya/view/detailSejarawan.dart';
 import 'package:intl/intl.dart';
 import 'package:aplikasi_budaya/view/create_sejarawan.dart';
+import 'package:aplikasi_budaya/view/edit_sejarawan.dart';
+
 
 
 class SejarawanPage extends StatefulWidget {
@@ -25,6 +28,8 @@ class _SejarawanPageState extends State<SejarawanPage> {
   late List<Datum> _filteredSejarawanList;
   late bool _isLoading;
   TextEditingController _searchController = TextEditingController();
+  
+  // get mySejarawan => null;
 
   @override
   void initState() {
@@ -56,27 +61,29 @@ class _SejarawanPageState extends State<SejarawanPage> {
     });
   }
 
-  Future<void> _deleteSejarawan(int id) async {
-    final response = await http.delete(Uri.parse('http://192.168.1.9/budaya_server/deleteTokoh.php?id=$id'));
-    if (response.statusCode == 200) {
-      setState(() {
-        // Hapus data sejarawan dari _sejarawanList
-        _sejarawanList.removeWhere((sejarawan) => sejarawan.id == id);
-        _filteredSejarawanList.removeWhere((sejarawan) => sejarawan.id == id);
-      });
+Future<void> _deleteSejarawan(String id) async {
+  try {
+    http.Response res = await http.post(
+      Uri.parse('http://192.168.1.9/budaya_server/deleteTokoh.php'),
+      body: {'id': id}, // Menggunakan id langsung tanpa konversi ke int
+    );
+    if (res.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Sejarawan berhasil dihapus'),
-        ),
+        SnackBar(content: Text('Data Sejarawan berhasil dihapus')),
       );
+      _fetchSejarawan();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal menghapus sejarawan'),
-        ),
+        SnackBar(content: Text('Gagal menghapus Data Sejarawan')),
       );
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(e.toString())),
+    );
   }
+}
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -178,19 +185,26 @@ class _SejarawanPageState extends State<SejarawanPage> {
                                                 MainAxisAlignment.end,
                                             children: [
                                               IconButton(
-                                                onPressed: () {
-                                                  // Navigator.push(
-                                                  //     context,
-                                                  //     MaterialPageRoute(
-                                                  //       builder: (context) => EditSejarawan()
-                                                  //     )
-                                                  // );
-                                                },
-                                                icon: Icon(
-                                                  Icons.edit,
-                                                  color: Colors.grey,
-                                                ),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                    MaterialPageRoute(builder: (context) => EditSejarawanPage(
+                                                      id: sejarawan.id,
+                                                      nama: sejarawan.nama,
+                                                      tgl_lahir: sejarawan.tgl_lahir,
+                                                      asal: sejarawan.asal,
+                                                      jenis_kelamin: sejarawan.jenis_kelamin,
+                                                      deskripsi: sejarawan.deskripsi,
+                                                    )),
+                                                );
+                                              },
+                                              icon: const Icon(
+                                                Icons.edit,
+                                                color: Colors.grey,
                                               ),
+                                            ),
+
+
                                               IconButton(
                                                 onPressed: () {
                                                   showDialog(
@@ -198,6 +212,7 @@ class _SejarawanPageState extends State<SejarawanPage> {
                                                     builder:
                                                         (BuildContext context) {
                                                       return AlertDialog(
+                                                          backgroundColor: Colors.white,
                                                         content: Column(
                                                           mainAxisSize:
                                                               MainAxisSize.min,
@@ -212,6 +227,7 @@ class _SejarawanPageState extends State<SejarawanPage> {
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:38,
+                                                                    color: Colors.red,
                                                                     fontWeight:FontWeight.bold,
                                                                   ),
                                                                 ),
@@ -222,9 +238,8 @@ class _SejarawanPageState extends State<SejarawanPage> {
                                                                   'Are you sure want to delete data?',
                                                                   textAlign:TextAlign.center,
                                                                   style:TextStyle(
-                                                                    fontSize:20,
-                                                                    color: Colors.white,
-                                                                    fontWeight:FontWeight.bold,
+                                                                    fontSize: 16,
+                                                                    color: Colors.black,
                                                                   ),
                                                                 ),
                                                                 SizedBox(
@@ -252,8 +267,7 @@ class _SejarawanPageState extends State<SejarawanPage> {
                                                           Center(
                                                             child: TextButton(
                                                               onPressed: () {
-                                                                _deleteSejarawan(int.parse(sejarawan.id)); // Panggil fungsi hapus sejarawan
-                                                                Navigator.of(context).pop(); 
+                                                                _deleteSejarawan(sejarawan.id);
                                                               },
                                                               child: Text(
                                                                 "Ok",

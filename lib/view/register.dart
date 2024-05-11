@@ -241,7 +241,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: Container(
                         height: 60,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 192, 48, 72),
+                          color: Color.fromARGB(245, 221, 99, 95),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Stack(

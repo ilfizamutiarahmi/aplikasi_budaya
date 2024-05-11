@@ -63,7 +63,7 @@ flutter:
   assets:
     - assets/rumah.jpg
     - assets/splash_rumah.png
-    - assets/rumah_gadang.png
+    - assets/rumah_gadang1.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

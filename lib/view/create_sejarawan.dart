@@ -180,37 +180,6 @@ class _CreateSejarawanState extends State<CreateSejarawan> {
             ),
             SizedBox(height: 16),
             InkWell(
-              onTap: selectFile,
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "Pilih Foto",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding:
-                  EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      Icon(Icons.image),
-                      SizedBox(width: 10),
-                      Text(_fotoPath.isNotEmpty
-                          ? _fotoPath
-                          .split('/')
-                          .last
-                          : 'Pilih foto'),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-            InkWell(
               onTap: () => _selectDate(context), // Date picker call
               child: InputDecorator(
                 decoration: InputDecoration(
@@ -293,13 +262,44 @@ class _CreateSejarawanState extends State<CreateSejarawan> {
             ),
             SizedBox(height: 16),
             InkWell(
+              onTap: selectFile,
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: "Pilih Foto",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding:
+                  EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Icon(Icons.image),
+                      SizedBox(width: 10),
+                      Text(_fotoPath.isNotEmpty
+                          ? _fotoPath
+                          .split('/')
+                          .last
+                          : 'Pilih foto'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 16),
+            InkWell(
               onTap: () {
-                CreateSejarawan();
+                createSejarawan();
               },
               child: Container(
                 height: 60,
                 decoration: BoxDecoration(
-                  color: Color(0xFFFAD7C8),
+                  color: Color.fromARGB(245, 221, 99, 95),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Stack(
@@ -308,7 +308,7 @@ class _CreateSejarawanState extends State<CreateSejarawan> {
                     Align(
                       alignment: Alignment.center,
                       child: Text(
-                        'Save ',
+                        'Save',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 18,
@@ -321,327 +321,9 @@ class _CreateSejarawanState extends State<CreateSejarawan> {
                 ),
               ),
             ),
-            // ElevatedButton(
-            //   onPressed: addSejarawan,
-            //   child: Container(
-            //     height: 60,
-            //     decoration: BoxDecoration(
-            //       color: Color(0xFF008080),
-            //       borderRadius: BorderRadius.circular(20),
-            //     ),
-            //     child: Stack(
-            //       alignment: Alignment.center,
-            //       children: <Widget>[
-            //         Align(
-            //           alignment: Alignment.center,
-            //           child: Text(
-            //             'Edit ',
-            //             textAlign: TextAlign.center,
-            //             style: TextStyle(
-            //               fontSize: 18,
-            //               fontWeight: FontWeight.bold,
-            //               color: Colors.white,
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),
     );
   }
-
-// @override
-// Widget build(BuildContext context) {
-//   return Scaffold(
-//       body: SingleChildScrollView(
-//     padding: EdgeInsets.all(16.0),
-//     child: Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Row(
-//           children: [
-//             Container(
-//               padding: EdgeInsets.all(8),
-//               decoration: BoxDecoration(
-//                 borderRadius: BorderRadius.circular(10),
-//                 color: Colors.white,
-//               ),
-//               child: GestureDetector(
-//                 onTap: () {
-//                   Navigator.pop(context, HomeScreen());
-//                 },
-//                 child: Image.asset(
-//                   'images/back.png',
-//                   width: 20,
-//                   height: 20,
-//                 ),
-//               ),
-//             ),
-//             SizedBox(width: 10),
-//             Text(
-//               'Create Sejarawan',
-//               style: TextStyle(
-//                 fontSize: 18,
-//                 fontWeight: FontWeight.bold,
-//                 fontFamily: 'Rubik',
-//                 color: Colors.white,
-//               ),
-//             ),
-//           ],
-//         ),
-//         // SizedBox(height: 50),
-//         // Image.asset(
-//         //   'images/gambar5.png',
-//         //   width: 150, // Ubah lebar gambar menjadi lebih kecil
-//         // ),
-//         SizedBox(height: 20),
-//         Center(
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               SizedBox(
-//                 height: 15,
-//               ),
-//               Container(
-//                 width: 450,
-//                 padding: EdgeInsets.symmetric(horizontal: 20),
-//                 child: TextFormField(
-//                   decoration: InputDecoration(
-//                     fillColor: Colors.grey.withOpacity(0.2),
-//                     filled: true,
-//                     border: OutlineInputBorder(
-//                       borderSide: BorderSide.none,
-//                       borderRadius: BorderRadius.circular(12),
-//                     ),
-//                     hintText: 'Nama',
-//                     suffixIcon: _name != null && _name!.isNotEmpty
-//                         ? Icon(Icons.check, color: Colors.green)
-//                         : null,
-//                   ),
-//                   controller: _namaController,
-//                   onChanged: (value) {
-//                     setState(() {
-//                       _name = value.trim();
-//                     });
-//                   },
-//                   validator: (value) {
-//                     if (value == null || value.isEmpty) {
-//                       return 'Nama tidak boleh kosong';
-//                     }
-//                     return null;
-//                   },
-//                 ),
-//               ),
-//               SizedBox(
-//                 height: 10,
-//               ),
-//               Container(
-//                 width: 450,
-//                 padding: EdgeInsets.symmetric(horizontal: 20),
-//                 child: TextFormField(
-//                   decoration: InputDecoration(
-//                     fillColor: Colors.grey.withOpacity(0.2),
-//                     filled: true,
-//                     border: OutlineInputBorder(
-//                       borderSide: BorderSide.none,
-//                       borderRadius: BorderRadius.circular(12),
-//                     ),
-//                     hintText: 'Foto',
-//                   ),
-//                 ),
-//               ),
-//               SizedBox(
-//                 height: 10,
-//               ),
-//               InkWell(
-//                 onTap: selectFile,
-//                 child: InputDecorator(
-//                   decoration: InputDecoration(
-//                     labelText: 'Foto',
-//                     filled: true,
-//                     fillColor: Colors.white,
-//                     border: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(8.0),
-//                       borderSide: BorderSide.none,
-//                     ),
-//                     contentPadding:
-//                         EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-//                   ),
-//                   child: SingleChildScrollView(
-//                     scrollDirection: Axis.horizontal,
-//                     child: Row(
-//                       children: [
-//                         Icon(Icons.image),
-//                         SizedBox(width: 10),
-//                         Text(_fotoPath.isNotEmpty
-//                             ? _fotoPath.split('/').last
-//                             : 'Pilih foto'),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               InkWell(
-//                 onTap: () => _selectDate(context),
-//                 // Date picker call
-//                 child: InputDecorator(
-//                   decoration: InputDecoration(
-//                     labelText: 'Tanggal Lahir',
-//                     filled: true,
-//                     fillColor: Colors.white,
-//                     prefixIcon: Icon(Icons.calendar_today),
-//                     border: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(8.0),
-//                       borderSide: BorderSide.none,
-//                     ),
-//                     contentPadding:
-//                         EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-//                   ),
-//                   child: Row(
-//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                     children: <Widget>[
-//                       Text(DateFormat('yyyy-MM-dd').format(_selectedDate)),
-//                       Icon(Icons.calendar_today),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//               Container(
-//                 width: 450,
-//                 padding: EdgeInsets.symmetric(horizontal: 20),
-//                 child: TextFormField(
-//                   decoration: InputDecoration(
-//                     fillColor: Colors.grey.withOpacity(0.2),
-//                     filled: true,
-//                     border: OutlineInputBorder(
-//                       borderSide: BorderSide.none,
-//                       borderRadius: BorderRadius.circular(12),
-//                     ),
-//                     hintText: 'Asal',
-//                     suffixIcon: _name != null && _name!.isNotEmpty
-//                         ? Icon(Icons.check, color: Colors.green)
-//                         : null,
-//                   ),
-//                   controller: _asalController,
-//                   onChanged: (value) {
-//                     setState(() {
-//                       _name = value.trim();
-//                     });
-//                   },
-//                   validator: (value) {
-//                     if (value == null || value.isEmpty) {
-//                       return 'Asal tidak boleh kosong';
-//                     }
-//                     return null;
-//                   },
-//                 ),
-//               ),
-//               SizedBox(
-//                 height: 10,
-//               ),
-//               DropdownButtonFormField<String>(
-//                 decoration: InputDecoration(
-//                   labelText: 'Jenis Kelamin',
-//                   filled: true,
-//                   fillColor: Colors.white,
-//                   prefixIcon: Icon(Icons.person_outline),
-//                   border: OutlineInputBorder(
-//                     borderRadius: BorderRadius.circular(8.0),
-//                     borderSide: BorderSide.none,
-//                   ),
-//                   contentPadding:
-//                       EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-//                 ),
-//                 value:
-//                     _jenisKelaminValue.isNotEmpty ? _jenisKelaminValue : null,
-//                 onChanged: (String? newValue) {
-//                   setState(() {
-//                     _jenisKelaminValue = newValue!;
-//                   });
-//                 },
-//                 items: <String>['', 'Laki Laki', 'Perempuan']
-//                     .map<DropdownMenuItem<String>>((String value) {
-//                   return DropdownMenuItem<String>(
-//                     value: value,
-//                     child: Text(value),
-//                   );
-//                 }).toList(),
-//               ),
-//               SizedBox(
-//                 height: 10,
-//               ),
-//               Container(
-//                 width: 450,
-//                 padding: EdgeInsets.symmetric(horizontal: 20),
-//                 child: TextFormField(
-//                   decoration: InputDecoration(
-//                     fillColor: Colors.grey.withOpacity(0.2),
-//                     filled: true,
-//                     border: OutlineInputBorder(
-//                       borderSide: BorderSide.none,
-//                       borderRadius: BorderRadius.circular(12),
-//                     ),
-//                     hintText: 'Deskripsi',
-//                     suffixIcon: _name != null && _name!.isNotEmpty
-//                         ? Icon(Icons.check, color: Colors.green)
-//                         : null,
-//                   ),
-//                   controller: _deskripsiController,
-//                   onChanged: (value) {
-//                     setState(() {
-//                       _name = value.trim();
-//                     });
-//                   },
-//                   validator: (value) {
-//                     if (value == null || value.isEmpty) {
-//                       return 'Tanggal tidak boleh kosong';
-//                     }
-//                     return null;
-//                   },
-//                 ),
-//               ),
-//               SizedBox(
-//                 height: 20,
-//               ),
-//               SizedBox(height: 20),
-//               Container(
-//                 width: MediaQuery.of(context).size.width - (2 * 98),
-//                 height: 55,
-//                 child: ElevatedButton(
-//                   style: ElevatedButton.styleFrom(
-//                     elevation: 7,
-//                     backgroundColor: Colors.blue,
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(15),
-//                     ),
-//                   ),
-//                   onPressed: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                         builder: (context) => SejarawanPage1(),
-//                       ),
-//                     );
-//                   },
-//                   child: Text(
-//                     'Save',
-//                     style: TextStyle(
-//                       color: Colors.black,
-//                       fontWeight: FontWeight.bold,
-//                       fontSize: 18,
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ],
-//     ),
-//   ));
-// }
 }

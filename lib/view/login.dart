@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:aplikasi_budaya/model/ModelLogin.dart';
 import 'package:aplikasi_budaya/model/api_service.dart';
-import 'package:aplikasi_budaya/model/sessionManager.dart';
+import 'package:aplikasi_budaya/util/sessionManager.dart';
 import 'package:aplikasi_budaya/view/register.dart';
+import 'package:aplikasi_budaya/view/home.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -15,7 +16,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   TextEditingController txtEmail = TextEditingController();
   TextEditingController txtPassword = TextEditingController();
   GlobalKey<FormState> keyForm = GlobalKey<FormState>();
@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
         isLoading = true;
       });
 
-      http.Response res = await http.post(
+      final response = await http.post(
         Uri.parse('http://192.168.1.9/budaya_server/login.php'),
         body: {
           "email": txtEmail.text,
@@ -37,29 +37,13 @@ class _LoginPageState extends State<LoginPage> {
         },
       );
 
-      if (res.statusCode == 200) {
-        Map<String, dynamic> data = json.decode(res.body);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
         if (data['value'] == 1) {
-          sessionManager.saveSession(
-            data['value'],
-            data['id'],
-            data['username'],
-            data['name'],
-            data['email'],
-            data['phone'],
-          );
-
-          print('Nilai sesi disimpan:');
-          print('ID: ${data['id']}');
-          print('Username: ${data['username']}');
-          print('Name: ${data['name']}');
-          print('Email: ${data['email']}');
-          print('Phone: ${data['phone']}');
-
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${data['message']}')));
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => RegisterPage()),
+            MaterialPageRoute(builder: (context) => Home()),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${data['message']}')));
@@ -75,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: Container(
                         height: 60,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 192, 48, 72),
+                          color: Color.fromARGB(245, 221, 99, 95),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Stack(

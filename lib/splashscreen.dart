@@ -35,16 +35,14 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/rumah_gadang.png',
+                'assets/rumah_gadang1.png',
                 width: 250,
-                height: 250,
               ),
-              SizedBox(height: 5),
               Text(
                     "Minangkabau",
                     style: TextStyle(
                       fontFamily: 'Sail',
-                      fontSize: 24,
+                      fontSize: 36,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

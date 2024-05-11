@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Home(),
+      home: SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
