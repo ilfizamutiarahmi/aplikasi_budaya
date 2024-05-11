@@ -8,9 +8,9 @@ import 'package:aplikasi_budaya/view/detail_budaya.dart';
 import 'package:aplikasi_budaya/view/galery.dart';
 import 'package:aplikasi_budaya/view/home.dart';
 import 'package:aplikasi_budaya/view/detailSejarawan.dart';
+import 'package:intl/intl.dart';
+import 'package:aplikasi_budaya/view/create_sejarawan.dart';
 
-
-import 'register.dart';
 
 class SejarawanPage extends StatefulWidget {
   @override
@@ -35,13 +35,11 @@ class _SejarawanPageState extends State<SejarawanPage> {
   }
 
   Future<void> _fetchSejarawan() async {
-    final response =
-        await http.get(Uri.parse('http://192.168.1.9/budaya_server/getTokoh.php'));
+    final response = await http.get(Uri.parse('http://192.168.1.9/budaya_server/getTokoh.php'));
     if (response.statusCode == 200) {
       final parsed = jsonDecode(response.body);
       setState(() {
-        _sejarawanList =
-            List<Datum>.from(parsed['data'].map((x) => Datum.fromJson(x)));
+        _sejarawanList = List<Datum>.from(parsed['data'].map((x) => Datum.fromJson(x)));
         _filteredSejarawanList = _sejarawanList;
         _isLoading = false;
       });
@@ -53,12 +51,32 @@ class _SejarawanPageState extends State<SejarawanPage> {
   void _filterSejarawanList(String query) {
     setState(() {
       _filteredSejarawanList = _sejarawanList
-          .where((sejarawan) =>
-              sejarawan.nama.toLowerCase().contains(query.toLowerCase()))
+          .where((sejarawan) => sejarawan.nama.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
 
+  Future<void> _deleteSejarawan(int id) async {
+    final response = await http.delete(Uri.parse('http://192.168.1.9/budaya_server/deleteTokoh.php?id=$id'));
+    if (response.statusCode == 200) {
+      setState(() {
+        // Hapus data sejarawan dari _sejarawanList
+        _sejarawanList.removeWhere((sejarawan) => sejarawan.id == id);
+        _filteredSejarawanList.removeWhere((sejarawan) => sejarawan.id == id);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Sejarawan berhasil dihapus'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal menghapus sejarawan'),
+        ),
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,101 +91,214 @@ class _SejarawanPageState extends State<SejarawanPage> {
         ),
         backgroundColor: const Color(0xFFFAD7C8),
       ),
-
       body: SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: _searchController,
-                onChanged: _filterSejarawanList,
-                decoration: const InputDecoration(
-                  labelText: 'Search Tokoh Sejarah',
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: _filterSejarawanList,
+                  decoration: const InputDecoration(
+                    labelText: 'Search Tokoh Sejarah',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(),
+                  ),
                 ),
               ),
-            ),
-            _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _filteredSejarawanList.length,
-                    itemBuilder: (context, index) {
-                      final sejarawan = _filteredSejarawanList[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailSejarawan(data: sejarawan),
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                      'http://192.168.1.9/budaya_server/tokoh/${sejarawan.foto}',
-                                      fit: BoxFit.fill,
-                                      width: 100,
-                                      height: 120,
+              _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _filteredSejarawanList.length,
+                      itemBuilder: (context, index) {
+                        final sejarawan = _filteredSejarawanList[index];
+                        final formatter = DateFormat('dd-MM-yyyy');
+                        final birthDate = DateTime.tryParse(sejarawan.tgl_lahir) ?? DateTime.now();
+                        final formattedBirthDate = formatter.format(birthDate);
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailSejarawan(data: sejarawan),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        'http://192.168.1.9/budaya_server/tokoh/${sejarawan.foto}',
+                                        fit: BoxFit.fill,
+                                        width: 100,
+                                        height: 120,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          sejarawan.nama,
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            sejarawan.nama,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(height: 5),
-                                        Text(
-                                          sejarawan.asal,
-                                          style: TextStyle(
-                                            color: Colors.grey,
+                                          SizedBox(height: 5),
+                                          Text(
+                                            sejarawan.asal,
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(height: 5),
-                                        Text(
-                                          sejarawan.tgl_lahir,
-                                          style: TextStyle(
-                                            color: Colors.grey,
+                                          SizedBox(height: 5),
+                                          Text(
+                                            formattedBirthDate,
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(height: 5),
-                                      ],
+                                          SizedBox(height: 5),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              IconButton(
+                                                onPressed: () {
+                                                  // Navigator.push(
+                                                  //     context,
+                                                  //     MaterialPageRoute(
+                                                  //       builder: (context) => EditSejarawan()
+                                                  //     )
+                                                  // );
+                                                },
+                                                icon: Icon(
+                                                  Icons.edit,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              IconButton(
+                                                onPressed: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        content: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            SizedBox(
+                                                                height: 16),
+                                                            Column(
+                                                              children: [
+                                                                Text(
+                                                                  'Delete',
+                                                                  textAlign:TextAlign.center,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:38,
+                                                                    fontWeight:FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text(
+                                                                  'Are you sure want to delete data?',
+                                                                  textAlign:TextAlign.center,
+                                                                  style:TextStyle(
+                                                                    fontSize:20,
+                                                                    color: Colors.white,
+                                                                    fontWeight:FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 20,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        actions: <Widget>[
+                                                          Center(
+                                                            child: TextButton(
+                                                              onPressed: () {
+                                                                Navigator.of(context).pop(); 
+                                                              },
+                                                              child: Text(
+                                                                "Cancel",
+                                                                style: TextStyle(
+                                                                  color: Colors.red,
+                                                                ),    
+                                                                textAlign:TextAlign.center,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Center(
+                                                            child: TextButton(
+                                                              onPressed: () {
+                                                                _deleteSejarawan(int.parse(sejarawan.id)); // Panggil fungsi hapus sejarawan
+                                                                Navigator.of(context).pop(); 
+                                                              },
+                                                              child: Text(
+                                                                "Ok",
+                                                                style: TextStyle(
+                                                                  color: Colors.green,
+                                                                ),
+                                                                textAlign:TextAlign.center,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                icon: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ],
+                        );
+                      },
+                    ),
+            ],
+          ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateSejarawan()));
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color.fromARGB(245, 221, 99, 95), // Warna latar belakang tombol tambah
       ),
-
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           canvasColor: Color.fromARGB(245, 221, 99, 95), // Menetapkan warna latar belakang
@@ -178,16 +309,13 @@ class _SejarawanPageState extends State<SejarawanPage> {
           onTap: (int index) {
             setState(() {
               _currentIndex = index;
-              if(_currentIndex == 0){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()));
-              }
-              else if(_currentIndex == 1){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>SejarawanPage()));
-              }
-              else if(_currentIndex == 2){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>GaleriPage()));
-              }
-              else if(_currentIndex == 3){
+              if (_currentIndex == 0) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+              } else if (_currentIndex == 1) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => SejarawanPage()));
+              } else if (_currentIndex == 2) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => GaleriPage()));
+              } else if (_currentIndex == 3) {
                 // _goToUserProfile(); // Handler untuk indeks 3 (Profile)
               }
             });
@@ -216,4 +344,3 @@ class _SejarawanPageState extends State<SejarawanPage> {
     );
   }
 }
-
